@@ -6,6 +6,29 @@ main.style.display = "none";
 let message = document.createElement("h3");
 main.after(message); 
 
+let continueBtn = document.createElement("button");
+continueBtn.textContent = "Continue";
+message.after(continueBtn);
+continueBtn.style.display = "none";
+
+continueBtn.addEventListener("click", event => {
+    init();
+})
+
+let themeButton = document.getElementById("theme");
+themeButton.addEventListener("click", evt => {
+    evt.preventDefault();
+    let style = document.getElementById("style");
+    console.log(style);
+    console.log(style.href);
+    console.log(("" + style.href).includes("/assets/css/blackjack.css"));
+    if(("" + style.href).includes("/assets/css/blackjack.css")){
+        style.href = "./assets/css/blackjackDark.css";
+    } else {
+        style.href = "./assets/css/blackjack.css"
+    }
+})
+
 function Player(cards_holder, player_score) {
     this.name = "Ciccio";
     this.hand = [];
@@ -63,60 +86,55 @@ function pointsCount(player){
 }
 
 function busted(player){
+    console.log(player.points);
     if(player.points > 21) {
         main.style.display = "none";
         message.style.display = "block";
         message.textContent = player.name+" busted with " +player.points;
+        continueBtn.style.display = "block";
         return true;
     }
     return false;
 }
-
-function playerWin(dealerPoints, playerPoints){
-    if(playerPoints > dealerPoints){
-        return "Win!";
-    }if(playerPoints === dealerPoints){
-        return "Tie...";
-    }
-    return "Loss!";
-}
-
-/* function show(player, dealer) {
-    showHand(player);
-    showHand(dealer);
-    showScore(player);
-    showScore(dealer);
-} */
 
 function showScore(player) {
     pointsCount(player);
     player.player_score.innerHTML = player.points;
 }
 
-function init(player) {
-    // pot
-    // bet
-    // resetta la mano
-}
-
-function game(){
-    let gameover = false;
+function init(player, dealer) {
     main.style.display = "block";
     message.style.display = "none";
     let deck = new Deck();
-    let player = new Player("playerCards", "playerSum");
-    let dealer = new Player("dealerCards", "dealerSum");
-    dealer.name = "Dealer";
-    dealer.isPlayer = false;
-    dealer.budget = 10000;
-
+    // pot
+    let pot = 0;
+    // bet
+    let bet = +prompt("Inserisci la tua puntata", 0);
+    pot = bet;
+    player.budget -= bet;
+    // resetta la mano
+    player.hand = [];
+    dealer.hand = [];
+    
     deal(player, deck);
     deal(player, deck);
     deal(dealer, deck);
     deal(dealer, deck);
 
     showScore(player);
+    // showBudget(player);
     showScore(dealer);
+
+    if (player.points === 21) {
+        endRound(player, pot);
+    }
+
+    if (dealer.points === 21) {
+        endRound(dealer);
+    }
+
+    if (busted(player)) endRound(dealer);
+    if (busted(dealer)) endRound(player);
 
     let hitButton = document.getElementById("hit");
     hitButton.addEventListener("click", evt => {
@@ -124,18 +142,37 @@ function game(){
         deal(player, deck);
         pointsCount(player);
         showScore(player);
-        stillPlaying = true;
+        if (busted(player)) endRound(dealer);
     })
+}
 
-
-        
-    if(tieBJ()){
-        return "tieBJ";
-    }if(playerBJ()){
-        return "playerBJ";
-    }if(dealerBJ()){
-        return "dealerBJ";
+function endRound(player, pot) {
+    if (!player.isPlayer) {
+        main.style.display = "none";
+        message.style.display = "block";
+        message.innerText = "Hai perso!"; 
+        setTimeout(init(), 5000);
     }
+
+    if (player.isPlayer) {
+        player.budget += pot * 2;
+        main.style.display = "none";
+        message.style.display = "block";
+        message.innerText = "Hai vinto!"; 
+        setTimeout(init(), 5000);
+    }
+}
+
+function game(){
+    main.style.display = "block";
+    message.style.display = "none";
+    
+    let player = new Player("playerCards", "playerSum");
+    let dealer = new Player("dealerCards", "dealerSum");
+    dealer.name = "Dealer";
+    dealer.isPlayer = false;
+    dealer.budget = 10000;
+    init(player, dealer);
 }
 
 function showHand(player){
