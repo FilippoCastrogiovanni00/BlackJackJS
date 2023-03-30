@@ -14,13 +14,8 @@ body{
     height: 50px;
     font-size: 20px;
 }
-#dealerCards img {
-    height: 175px;
-    width: 125px;
-    margin: 1px;
-    
-}
-#playerCards img {
+
+.cards {
     height: 175px;
     width: 125px;
     margin: 1px;

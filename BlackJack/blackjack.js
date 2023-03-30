@@ -2,9 +2,9 @@
 const suits = ['c','q','f','p'];
 
 class Card{
-    constructor(value, suits) {
+    constructor(value, suit) {
         this.value = value;
-        this.suits = suits;
+        this.suit = suit;
     }
 }
 let c2 = new Card(2,'c');
@@ -72,15 +72,15 @@ let playerPoints = 0;
 let dealerPoints = 0;
 
 deck.push(c2,c3,c4,c5,c6,c7,c8,c9,c10,cJ,cQ,cK,cA);
-deck.push(c2,c3,c4,c5,c6,c7,c8,c9,c10,cJ,cQ,cK,cA);
-deck.push(c2,c3,c4,c5,c6,c7,c8,c9,c10,cJ,cQ,cK,cA);
-deck.push(c2,c3,c4,c5,c6,c7,c8,c9,c10,cJ,cQ,cK,cA);
+deck.push(q2,q3,q4,q5,q6,q7,q8,q9,q10,qJ,qQ,qK,qA);
+deck.push(f2,f3,f4,f5,f6,f7,f8,f9,f10,fJ,fQ,fK,fA);
+deck.push(p2,p3,p4,p5,p6,p7,p8,p9,p10,pJ,pQ,pK,pA);
 
 
-function deal(){
+function deal(hand){
    let rn = Math.floor(Math.random()*deck.length);
    let dealtCard = deck.at(rn);
-   playerHand.push(dealtCard); 
+   hand.push(dealtCard); 
    deck.splice(rn, 1);   
 }
 
@@ -124,6 +124,31 @@ function game(){
     }
 }
 
+let tasto = document.getElementById("hit");
+tasto.addEventListener("click", evt => {
+    evt.preventDefault();
+    console.log(playerHand);
+    deal(playerHand);
+    showHand(playerHand);
+    console.log(playerHand);
+});
+
+function showHand(hand){
+    let playerCards = document.getElementById("playerCards");
+    
+        let c = document.createElement("img");
+        c.classList.add("cards");
+        let cValue = hand[hand.length -1].value;
+        if(cValue > 10){
+            switch(cValue){
+                
+            }
+        }
+        c.src = "./img/"+ hand[hand.length -1].suit + hand[hand.length -1].value + ".png";
+        playerCards.appendChild(c);
+    
+}
+
 function playerBJ(){
     if(playerPoints == 21 && dealerPoints < playerPoints){
         return true;
@@ -133,8 +158,5 @@ function dealerBJ(){
     return dealerPoints == 21 && playerPoints < dealerPoints;   
 }
 function tieBJ(){
-    return playerPoints==21 && dealerPoints==playerPoints;        
+    return playerPoints== 21 && dealerPoints==playerPoints;        
 }
-
-
-
