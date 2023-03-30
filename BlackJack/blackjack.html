@@ -8,20 +8,23 @@
     <link rel="stylesheet" href="./assets/css/blackjack.css">
 </head>
 <body>
-    <div id="dealerCards">
-        <h2>Dealer: <span id="dealerSum"></span></h2>
-        
+    <button id="start">Start</button>
+    <div id="main">
+        <div id="dealerCards">
+            <h2>Dealer: <span id="dealerSum"></span></h2>
+            
+        </div>
+    
+        <div id="playerCards">
+            <h2>Player: <span id="playerSum"></span></h2>
+            
+        </div>
+    
+        <br>
+        <button id="hit">Hit</button>
+        <button id="stand">Stand</button>
     </div>
-
-    <div id="playerCards">
-        <h2>Player: <span id="playerSum"></span></h2>
-        
-    </div>
-
-    <br>
-    <button id="hit">Hit</button>
-    <button id="stand">Stand</button>
-    <p id="result"></p>
+    <script src="./assets/js/deck.js"></script>
     <script src="./assets/js/blackjack.js"></script>
 </body>
 </html>
