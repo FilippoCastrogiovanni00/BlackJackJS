@@ -11,10 +11,6 @@ continueBtn.textContent = "Continue";
 message.after(continueBtn);
 continueBtn.style.display = "none";
 
-continueBtn.addEventListener("click", event => {
-    init();
-})
-
 let themeButton = document.getElementById("theme");
 themeButton.addEventListener("click", evt => {
     evt.preventDefault();
@@ -28,6 +24,65 @@ themeButton.addEventListener("click", evt => {
         style.href = "./assets/css/blackjack.css"
     }
 })
+
+function Game(player) {
+    this.player = player;
+    this.dealer = new Player("dealerCards", "dealerSum");
+    this.dealer.name = "Dealer";
+    this.dealer.isPlayer = false;
+    this.dealer.budget = 10000;
+    this.pot = 0;
+}
+
+Game.prototype.freshStart = function() {
+    this.init();
+}
+
+Game.prototype.init = function() {
+    main.style.display = "block";
+    message.style.display = "none";
+    let deck = new Deck();
+    // pot
+    this.pot = 0;
+    // bet
+    let bet = +prompt("Inserisci la tua puntata", 0);
+    this.pot = bet;
+    this.player.budget -= bet;
+    // resetta la mano
+    this.player.hand = [];
+    this.dealer.hand = [];
+    
+    deal(this.player, deck);
+    deal(this.player, deck);
+    deal(this.dealer, deck);
+    deal(this.dealer, deck);
+
+    showScore(this.player);
+    // showBudget(this.player);
+    showScore(this.dealer);
+
+    if (this.player.points === 21) {
+        endRound(this.player, this.pot);
+    }
+
+    if (this.dealer.points === 21) {
+        endRound(this.dealer);
+    }
+
+    if (busted(this.player)) endRound(this.dealer);
+    if (busted(this.dealer)) endRound(this.player);
+
+    let hitButton = document.getElementById("hit");
+    hitButton.addEventListener("click", evt => {
+        evt.preventDefault();
+        deal(this.player, deck);
+        pointsCount(this.player);
+        showScore(this.player);
+        busted(this.player); //this.endRound(this.dealer);
+    })
+
+
+}
 
 function Player(cards_holder, player_score) {
     this.name = "Ciccio";
@@ -102,77 +157,21 @@ function showScore(player) {
     player.player_score.innerHTML = player.points;
 }
 
-function init(player, dealer) {
-    main.style.display = "block";
-    message.style.display = "none";
-    let deck = new Deck();
-    // pot
-    let pot = 0;
-    // bet
-    let bet = +prompt("Inserisci la tua puntata", 0);
-    pot = bet;
-    player.budget -= bet;
-    // resetta la mano
-    player.hand = [];
-    dealer.hand = [];
-    
-    deal(player, deck);
-    deal(player, deck);
-    deal(dealer, deck);
-    deal(dealer, deck);
-
-    showScore(player);
-    // showBudget(player);
-    showScore(dealer);
-
-    if (player.points === 21) {
-        endRound(player, pot);
-    }
-
-    if (dealer.points === 21) {
-        endRound(dealer);
-    }
-
-    if (busted(player)) endRound(dealer);
-    if (busted(dealer)) endRound(player);
-
-    let hitButton = document.getElementById("hit");
-    hitButton.addEventListener("click", evt => {
-        evt.preventDefault();
-        deal(player, deck);
-        pointsCount(player);
-        showScore(player);
-        if (busted(player)) endRound(dealer);
-    })
-}
-
-function endRound(player, pot) {
-    if (!player.isPlayer) {
+Game.prototype.endRound = function() {
+    if (!this.player.isPlayer) {
         main.style.display = "none";
         message.style.display = "block";
         message.innerText = "Hai perso!"; 
-        setTimeout(init(), 5000);
+        setTimeout(this.init(), 5000);
     }
 
-    if (player.isPlayer) {
-        player.budget += pot * 2;
+    if (this.player.isPlayer) {
+        this.player.budget += this.pot * 2;
         main.style.display = "none";
         message.style.display = "block";
         message.innerText = "Hai vinto!"; 
-        setTimeout(init(), 5000);
+        setTimeout(this.init(), 5000);
     }
-}
-
-function game(){
-    main.style.display = "block";
-    message.style.display = "none";
-    
-    let player = new Player("playerCards", "playerSum");
-    let dealer = new Player("dealerCards", "dealerSum");
-    dealer.name = "Dealer";
-    dealer.isPlayer = false;
-    dealer.budget = 10000;
-    init(player, dealer);
 }
 
 function showHand(player){
@@ -182,17 +181,18 @@ function showHand(player){
     player.cards_holder.appendChild(c);
 }
 
-function playerBJ(){
-    if(playerPoints == 21 && dealerPoints < playerPoints){
-        return true;
-    }
-}
-function dealerBJ(){
-    return dealerPoints == 21 && playerPoints < dealerPoints;   
-}
-function tieBJ(){
-    return playerPoints== 21 && dealerPoints==playerPoints;        
-}
-
+let player = new Player("playerCards", "playerSum");
 let start = document.getElementById("start");
-start.addEventListener("click", game);
+let game;
+start.addEventListener("click", event => {
+    event.preventDefault();
+    game = new Game(player);
+    game.init();
+});
+
+
+continueBtn.addEventListener("click", event => {
+    event.preventDefault();
+    console.log(this);
+    game.init();
+})
