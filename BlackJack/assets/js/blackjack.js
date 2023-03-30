@@ -93,6 +93,12 @@ function showScore(player) {
     player.player_score.innerHTML = player.points;
 }
 
+function init(player) {
+    // pot
+    // bet
+    // resetta la mano
+}
+
 function game(){
     let gameover = false;
     main.style.display = "block";
@@ -104,29 +110,25 @@ function game(){
     dealer.isPlayer = false;
     dealer.budget = 10000;
 
-    do {
-        deal(player, deck);
-        deal(player, deck);
-        deal(dealer, deck);
-        deal(dealer, deck);
-    
-        showScore(player);
-        showScore(dealer);
-    
-        let hitButton = document.getElementById("hit");
-        hitButton.addEventListener("click", evt => {
-            evt.preventDefault();
-            deal(player, deck);
-            pointsCount(player);
-    
-            showScore(player);
-        })
+    deal(player, deck);
+    deal(player, deck);
+    deal(dealer, deck);
+    deal(dealer, deck);
 
-        if (busted(player)) return;
-        if (busted(dealer)) return;
+    showScore(player);
+    showScore(dealer);
+
+    let hitButton = document.getElementById("hit");
+    hitButton.addEventListener("click", evt => {
+        evt.preventDefault();
+        deal(player, deck);
+        pointsCount(player);
+        showScore(player);
+        stillPlaying = true;
+    })
+
+
         
-    } while (player.budget > 0 && dealer.budget > 0 && !gameover);
-    
     if(tieBJ()){
         return "tieBJ";
     }if(playerBJ()){
