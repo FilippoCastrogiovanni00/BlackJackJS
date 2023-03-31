@@ -11,78 +11,11 @@ continueBtn.textContent = "Continue";
 message.after(continueBtn);
 continueBtn.style.display = "none";
 
-let themeButton = document.getElementById("theme");
-themeButton.addEventListener("click", evt => {
-    evt.preventDefault();
-    let style = document.getElementById("style");
-    console.log(style);
-    console.log(style.href);
-    console.log(("" + style.href).includes("/assets/css/blackjack.css"));
-    if(("" + style.href).includes("/assets/css/blackjack.css")){
-        style.href = "./assets/css/blackjackDark.css";
-    } else {
-        style.href = "./assets/css/blackjack.css"
-    }
-})
+let hitBtn = document.getElementById("hit");
 
-function Game(player) {
-    this.player = player;
-    this.dealer = new Player("dealerCards", "dealerSum");
-    this.dealer.name = "Dealer";
-    this.dealer.isPlayer = false;
-    this.dealer.budget = 10000;
-    this.pot = 0;
-}
+let standBtn = document.getElementById("stand");
 
-Game.prototype.freshStart = function() {
-    this.init();
-}
-
-Game.prototype.init = function() {
-    main.style.display = "block";
-    message.style.display = "none";
-    let deck = new Deck();
-    // pot
-    this.pot = 0;
-    // bet
-    let bet = +prompt("Inserisci la tua puntata", 0);
-    this.pot = bet;
-    this.player.budget -= bet;
-    // resetta la mano
-    this.player.hand = [];
-    this.dealer.hand = [];
-    
-    deal(this.player, deck);
-    deal(this.player, deck);
-    deal(this.dealer, deck);
-    deal(this.dealer, deck);
-
-    showScore(this.player);
-    // showBudget(this.player);
-    showScore(this.dealer);
-
-    if (this.player.points === 21) {
-        endRound(this.player, this.pot);
-    }
-
-    if (this.dealer.points === 21) {
-        endRound(this.dealer);
-    }
-
-    if (busted(this.player)) endRound(this.dealer);
-    if (busted(this.dealer)) endRound(this.player);
-
-    let hitButton = document.getElementById("hit");
-    hitButton.addEventListener("click", evt => {
-        evt.preventDefault();
-        deal(this.player, deck);
-        pointsCount(this.player);
-        showScore(this.player);
-        busted(this.player); //this.endRound(this.dealer);
-    })
-
-
-}
+let themeBtn = document.getElementById("theme");
 
 function Player(cards_holder, player_score) {
     this.name = "Ciccio";
@@ -121,6 +54,77 @@ function Card(number, suit) {
     }
     this.suit = suit;
     this.representation = representation[suit];
+}
+
+function Game(player) {
+    this.player = player;
+    this.dealer = new Player("dealerCards", "dealerSum");
+    this.dealer.name = "Dealer";
+    this.dealer.isPlayer = false;
+    this.dealer.budget = 10000;
+    this.pot = 0;
+}
+
+Game.prototype.freshStart = function() {
+    this.init();
+}
+
+Game.prototype.init = function() {
+    main.style.display = "block";
+    message.style.display = "none";
+    let deck = new Deck();
+    // pot
+    this.pot = 0;
+    // bet
+    let bet = +prompt("Inserisci la tua puntata", 0);
+    this.pot = bet;
+    this.player.budget -= bet;
+    // resetta la mano
+    this.player.hand = [];
+    this.dealer.hand = [];
+    //this.player.cards_holder.style.
+    
+    deal(this.player, deck);
+    deal(this.player, deck);
+    deal(this.dealer, deck);
+    deal(this.dealer, deck);
+
+    showScore(this.player);
+    // showBudget(this.player);
+    showScore(this.dealer);
+
+    if (this.player.points === 21) {
+        this.endRound(this.player, this.pot);
+    }
+
+    if (this.dealer.points === 21) {
+        this.endRound(this.dealer);
+    }
+
+    busted(this.player);
+    busted(this.dealer);
+    
+    hitBtn.addEventListener("click", evt => {
+        evt.preventDefault();
+        deal(this.player, deck);
+        pointsCount(this.player);
+        showScore(this.player);
+        busted(this.player); //this.endRound(this.dealer);
+    })
+
+    standBtn.addEventListener("click", event => {
+        event.preventDefault();
+        deal(this.dealer, deck);
+        pointsCount(this.dealer);
+        showScore(this.dealer);
+        busted(this.dealer);
+    })
+
+    continueBtn.addEventListener("click", event => {
+        event.preventDefault();
+        console.log(this);
+        game.init();
+    })
 }
 
 function deal(player, deck){
@@ -184,15 +188,22 @@ function showHand(player){
 let player = new Player("playerCards", "playerSum");
 let start = document.getElementById("start");
 let game;
+
 start.addEventListener("click", event => {
     event.preventDefault();
     game = new Game(player);
     game.init();
 });
 
-
-continueBtn.addEventListener("click", event => {
-    event.preventDefault();
-    console.log(this);
-    game.init();
+themeBtn.addEventListener("click", evt => {
+    evt.preventDefault();
+    let style = document.getElementById("style");
+    console.log(style);
+    console.log(style.href);
+    console.log(("" + style.href).includes("/assets/css/blackjack.css"));
+    if(("" + style.href).includes("/assets/css/blackjack.css")){
+        style.href = "./assets/css/blackjackDark.css";
+    } else {
+        style.href = "./assets/css/blackjack.css"
+    }
 })
