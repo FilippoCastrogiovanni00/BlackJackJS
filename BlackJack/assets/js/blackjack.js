@@ -5,6 +5,19 @@ main.style.display = "none";
 
 let message = document.createElement("h3");
 main.after(message); 
+let themeButton = document.getElementById("theme");
+themeButton.addEventListener("click", evt => {
+    evt.preventDefault();
+    let style = document.getElementById("style");
+    console.log(style);
+    console.log(style.href);
+    console.log(("" + style.href).includes("/assets/css/blackjack.css"));
+    if(("" + style.href).includes("/assets/css/blackjack.css")){
+        style.href = "./assets/css/blackjackDark.css";
+    } else {
+        style.href = "./assets/css/blackjack.css"
+    }
+})
 
 function Player(cards_holder, player_score) {
     this.name = "Ciccio";
@@ -81,21 +94,15 @@ function playerWin(dealerPoints, playerPoints){
     return "Loss!";
 }
 
-/* function show(player, dealer) {
-    showHand(player);
-    showHand(dealer);
-    showScore(player);
-    showScore(dealer);
-} */
 
 function showScore(player) {
     pointsCount(player);
     player.player_score.innerHTML = player.points;
 }
 
-function init(player) {
-    // pot
-    // bet
+function init(player) { //lo chiamo all'inizio 
+    // pot piatto
+    // bet  scommessa
     // resetta la mano
 }
 
@@ -109,7 +116,7 @@ function game(){
     dealer.name = "Dealer";
     dealer.isPlayer = false;
     dealer.budget = 10000;
-
+    //round --initi
     deal(player, deck);
     deal(player, deck);
     deal(dealer, deck);
@@ -141,20 +148,20 @@ function game(){
 function showHand(player){
     let c = document.createElement("img");
     c.classList.add("cards");
-    c.src = "../assets/img/"+ player.hand[player.hand.length -1].representation + player.hand[player.hand.length -1].name + ".png";
+    c.src = "./assets/img/"+ player.hand[player.hand.length -1].representation + player.hand[player.hand.length -1].name + ".png";
     player.cards_holder.appendChild(c);
 }
 
 function playerBJ(){
-    if(playerPoints == 21 && dealerPoints < playerPoints){
+    if(player.points == 21 && dealer.points < player.points){
         return true;
     }
 }
 function dealerBJ(){
-    return dealerPoints == 21 && playerPoints < dealerPoints;   
+    return dealer.points == 21 && player.points < dealer.points;   
 }
 function tieBJ(){
-    return playerPoints== 21 && dealerPoints==playerPoints;        
+    return player.points== 21 && dealer.points==player.points;        
 }
 
 let start = document.getElementById("start");
